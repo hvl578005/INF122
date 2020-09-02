@@ -70,5 +70,9 @@ multlambda = \x -> (\y -> (\z -> x * y * z ))
 
 -- Assignment 8
 
+luhnDouble :: Int -> Int
+luhnDouble a =  if a + a > 9 then ( a + a - 9)
+                else a + a 
 
-
+luhn :: Int -> Int -> Int -> Int -> Bool
+luhn a b c d =  if ((luhnDouble a) + b + (luhnDouble c) + d ) `mod` 10 == 0 then True else False
