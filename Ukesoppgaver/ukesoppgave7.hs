@@ -1,0 +1,3 @@
+
+// ukes oppgave 7
+
