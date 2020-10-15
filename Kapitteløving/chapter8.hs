@@ -30,6 +30,3 @@ occurs x (Node l y r)   =   case compare x y of
                             GT -> occurs x r
 
 
-
-
-
