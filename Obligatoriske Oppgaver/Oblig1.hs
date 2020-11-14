@@ -7,9 +7,9 @@ data Ast = Word String | Num Int | Mult Ast Ast | Plus Ast Ast | Minus Ast Ast d
 
 tokenize :: String -> [String]
 tokenize [] = []
-tokenize ('*':xs) = "*": tokenize xs
-tokenize ('+':xs) = "+": tokenize xs
-tokenize ('-':xs) = "-": tokenize xs
+tokenize ('(':xs) = "*": tokenize xs
+tokenize (')':xs) = "+": tokenize xs
+tokenize (',':xs) = "-": tokenize xs
 tokenize (' ':xs) = tokenize xs
 tokenize (x:xs) 
     | isDigit x = takeWhile isDigit (x:xs) : tokenize (dropWhile isDigit xs)

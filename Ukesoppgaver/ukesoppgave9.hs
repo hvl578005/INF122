@@ -45,12 +45,12 @@ ve = 3
 
 writeAt (x,y) xs = do   
     putStr("\ESC7")                        
-    goto(x,y) 
+    gotos(x,y) 
     putStr xs
     putStr("\ESC7")     
 
-goto :: (Int, Int) -> IO ()                                     
-goto(x,y) = putStr ("\ESC[" ++ show y ++ ";" ++ show x ++ "H")
+gotos :: (Int, Int) -> IO ()                                     
+gotos(x,y) = putStr ("\ESC[" ++ show y ++ ";" ++ show x ++ "H")
 
 
 writeRows i n = if i == (n + 1) then return ()                    
@@ -73,8 +73,8 @@ brett1 n
             putStr "\ESC[2J"                                                    -- clearing page 
             goto 0 0                                                            -- moving cursor to top left 
             putStr $ spaces 2                                                   -- space for row numbers 
-            mapM_ (putStr . (\nb -> spaces (3 - l nb) ++ (show nb)) [1..n]  -- printing col numbers
-            putStrLn ""                                                         -- going to next line to start printing rows
+            mapM_ (putStr . (\nb -> spaces (3 - l nb) ++ show nb)) [1..n]  -- printing col numbers
+            putStrLn ""                                                      -- going to next line to start printing rows
             mapM_ (putStr . (brettRow n)) [1..n]                                -- printing the rows   
             printInstructions n
             xGame n       
@@ -97,27 +97,27 @@ xGame n = do
     goto 0 (n+4)                                -- input line below instructions and error messages
     putStr "[\ESC[0J"                           -- clear previous input 
     command <- getLine                          -- get commando
-    let cs = words                              -- split on spaces 
+    let cs = words command                             -- split on spaces 
     case cs of                                  -- check commando
         ("q":[]) -> return ()                   -- quit 
         ("n":x:y:[]) -> do                      -- add X
-            change x y n "X"
-            xGame n 
+                            change x y n "X"
+                            xGame n 
         ("d":x:y:[]) -> do                      -- remove X
-            change x y n "."
-            xGame n      
+                            change x y n "."
+                            xGame n      
         _ -> do                                 -- unknown command
-            printError "unknown command" n  
-            xGame n 
+                printError "unknown command" n  
+                xGame n 
 
 change :: String -> String -> Int -> String -> IO ()                    -- put X or . in grid 
 change x y n str                                                        --  check that coordinates are numbers 
                 | and (map (all isDigit) [x,y]) = 
                     let (nx, ny) = (read x, read y) in
                         if (nx > n || nx < 1 || ny > n || ny < 1)       -- check bounds
-                            then printError "Out of bounds"
+                            then printError "Out of bounds" n
                             else printInGrid str nx ny n 
-                | otherwise = printError "coordinates must be numbers"
+                | otherwise = printError "coordinates must be numbers" n
 
 printInGrid :: String -> Int -> Int -> Int -> IO ()         -- print X or . in grid 
 printInGrid s x y n = do 
@@ -137,3 +137,5 @@ printError s n = do
     goto 0 (n+3)            -- move cursos 
     putStr "\ESC[0J"        -- erase preious error message 
     putStr s 
+
+goto x y = putStr("\ESC[" ++ show y ++ ";" ++ show x ++ "H")
